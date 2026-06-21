@@ -1,24 +1,38 @@
+'use client';
+
 import React from 'react';
 import { Menu, Search, Bell } from 'lucide-react';
 import { useMobile } from '../../../context/MobileContext';
+import { useRouter } from 'next/navigation';
 
 export default function MobileNav() {
   const { openDrawer } = useMobile();
+  const router = useRouter();
+
   return (
-    <header className="flex items-center justify-between p-3 bg-[#050816] text-[#f3f4f6] min-touch">
-      <div className="flex items-center space-x-2">
-        <img src="/logo.svg" alt="Logo" className="h-6 w-6" />
-        <span className="text-lg font-bold">Zetheta</span>
-      </div>
-      <div className="flex items-center space-x-3">
-        <button onClick={openDrawer} className="p-2 min-touch">
-          <Menu className="w-5 h-5" />
+    <header className="flex items-center justify-between px-4 py-3 bg-[#050816] border-b border-[#1f2937]/30 shrink-0">
+      {/* Logo */}
+      <button onClick={() => router.push('/mobile')} className="flex items-center space-x-2">
+        <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-blue-600 to-blue-800 flex items-center justify-center shadow-lg shadow-blue-500/20">
+          <span className="text-white font-black text-xs">Z</span>
+        </div>
+        <span className="text-sm font-black text-white tracking-wider">ZETHETA</span>
+      </button>
+
+      {/* Right Icons */}
+      <div className="flex items-center space-x-1">
+        <button className="w-9 h-9 flex items-center justify-center rounded-xl hover:bg-[#0B1220] transition-colors">
+          <Search className="w-4.5 h-4.5 text-gray-400" />
         </button>
-        <button className="p-2 min-touch">
-          <Search className="w-5 h-5" />
+        <button className="w-9 h-9 flex items-center justify-center rounded-xl hover:bg-[#0B1220] transition-colors relative">
+          <Bell className="w-4.5 h-4.5 text-gray-400" />
+          <span className="absolute top-1.5 right-1.5 w-1.5 h-1.5 bg-rose-500 rounded-full" />
         </button>
-        <button className="p-2 min-touch">
-          <Bell className="w-5 h-5" />
+        <button
+          onClick={openDrawer}
+          className="w-9 h-9 flex items-center justify-center rounded-xl hover:bg-[#0B1220] transition-colors"
+        >
+          <Menu className="w-4.5 h-4.5 text-gray-300" />
         </button>
       </div>
     </header>
