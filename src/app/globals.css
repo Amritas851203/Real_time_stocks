@@ -1,0 +1,167 @@
+@import "tailwindcss";
+
+@theme {
+  --color-brand-bg: #050816;
+  --color-brand-secondary: #0B1220;
+  --color-brand-card: #111827;
+  --color-brand-emerald: #10B981;
+  --color-brand-blue: #3B82F6;
+  --color-brand-positive: #10B981;
+  --color-brand-negative: #EF4444;
+}
+
+:root {
+  --background: #050816;
+  --foreground: #f3f4f6;
+  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui;
+}
+
+body {
+  background-color: #050816;
+  color: #f3f4f6;
+  font-family: var(--font-sans);
+  overflow: hidden;
+  margin: 0;
+  padding: 0;
+}
+
+/* Glassmorphism Styles */
+.glass-panel {
+  background: rgba(11, 18, 32, 0.7);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+.glass-card {
+  background: rgba(17, 24, 39, 0.6);
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.4);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.glass-card:hover {
+  transform: translateY(-2px);
+  border-color: rgba(59, 130, 246, 0.25);
+  box-shadow: 0 8px 40px rgba(59, 130, 246, 0.15);
+}
+
+.glass-card-emerald {
+  background: rgba(17, 24, 39, 0.6);
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(16, 185, 129, 0.1);
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.4);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.glass-card-emerald:hover {
+  transform: translateY(-2px);
+  border-color: rgba(16, 185, 129, 0.3);
+  box-shadow: 0 8px 40px rgba(16, 185, 129, 0.15);
+}
+
+.glass-card-rose {
+  background: rgba(17, 24, 39, 0.6);
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(239, 68, 68, 0.1);
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.4);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.glass-card-rose:hover {
+  transform: translateY(-2px);
+  border-color: rgba(239, 68, 68, 0.3);
+  box-shadow: 0 8px 40px rgba(239, 68, 68, 0.15);
+}
+
+/* Custom Scrollbars */
+.scrollbar-thin::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+.scrollbar-thin::-webkit-scrollbar-track {
+  background: #050816;
+}
+.scrollbar-thin::-webkit-scrollbar-thumb {
+  background: #1f2937;
+  border-radius: 4px;
+}
+.scrollbar-thin::-webkit-scrollbar-thumb:hover {
+  background: #3b82f6;
+}
+
+/* Hide scrollbars */
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}
+.scrollbar-none {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Real-Time Price Update Animation Keyframes */
+@keyframes marquee {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+@keyframes flash-green {
+  0% {
+    background-color: rgba(16, 185, 129, 0.25);
+    box-shadow: inset 0 0 12px rgba(16, 185, 129, 0.2);
+  }
+  100% {
+    background-color: transparent;
+    box-shadow: none;
+  }
+}
+
+@keyframes flash-red {
+  0% {
+    background-color: rgba(239, 68, 68, 0.25);
+    box-shadow: inset 0 0 12px rgba(239, 68, 68, 0.2);
+  }
+  100% {
+    background-color: transparent;
+    box-shadow: none;
+  }
+}
+
+/* Animation utilities */
+.animate-marquee-slow {
+  display: inline-flex;
+  animation: marquee 40s linear infinite;
+}
+
+.animate-marquee-slow:hover {
+  animation-play-state: paused;
+}
+
+.animate-flash-up {
+  animation: flash-green 1.2s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+}
+
+.animate-flash-down {
+  animation: flash-red 1.2s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+}
+
+/* Custom styled dashboard elements */
+.neon-border-blue {
+  border: 1px solid rgba(59, 130, 246, 0.2);
+  box-shadow: 0 0 15px rgba(59, 130, 246, 0.08);
+}
+
+.neon-border-emerald {
+  border: 1px solid rgba(16, 185, 129, 0.2);
+  box-shadow: 0 0 15px rgba(16, 185, 129, 0.08);
+}
+
+.neon-active-tab {
+  background: linear-gradient(90deg, rgba(59, 130, 246, 0.15) 0%, rgba(59, 130, 246, 0.02) 100%);
+  border-left: 3px solid #3b82f6;
+  color: #3b82f6 !important;
+}
+
+.range-track-gradient {
+  background: linear-gradient(90deg, #ef4444 0%, #eab308 50%, #10b981 100%);
+}
