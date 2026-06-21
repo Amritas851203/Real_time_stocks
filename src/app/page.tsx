@@ -14,6 +14,17 @@ import { useWebSocket } from '../hooks/useWebSocket';
 import { useUiStore } from '../store/useUiStore';
 import { useStockStore } from '../store/useStockStore';
 import { useFilterStore } from '../store/useFilterStore';
+
+import DashboardView from '../components/views/DashboardView';
+import TechnicalView from '../components/views/TechnicalView';
+import PortfolioView from '../components/views/PortfolioView';
+import AlertsView from '../components/views/AlertsView';
+import NewsView from '../components/views/NewsView';
+import MarketOverviewView from '../components/views/MarketOverviewView';
+import SettingsView from '../components/views/SettingsView';
+import ChartsView from '../components/views/ChartsView';
+import DetailPanel from '../features/detail/components/DetailPanel';
+
 import {
   SlidersHorizontal,
   ArrowUpRight,
@@ -48,16 +59,21 @@ const QUICK_SECTORS = [
 
 export default function Home() {
   const { displayStocks, rawStocks, watchlist } = useStocks();
-  
-  console.log('[DEBUG] Home: render. displayStocks.length =', displayStocks.length, 'rawStocks.length =', rawStocks.length, 'selectedSymbol =', useUiStore.getState().selectedSymbol);
+
+  const watchlistStocks = useMemo(() => {
+    return displayStocks.filter((s) => watchlist.includes(s.symbol));
+  }, [displayStocks, watchlist]);
 
   // Ui Store Selectors
   const activeView = useUiStore((s) => s.activeView);
   const selectedSymbol = useUiStore((s) => s.selectedSymbol);
   const setSelectedSymbol = useUiStore((s) => s.setSelectedSymbol);
+  const detailSymbol = useUiStore((s) => s.detailSymbol);
+  const setDetailSymbol = useUiStore((s) => s.setDetailSymbol);
   const activeIndicators = useUiStore((s) => s.activeIndicators);
   const toggleIndicator = useUiStore((s) => s.toggleIndicator);
   const showToast = useUiStore((s) => s.showToast);
+  const theme = useUiStore((s) => s.theme);
 
   // Stock Store Selectors
   const recentlyViewed = useStockStore((s) => s.recentlyViewed);
@@ -82,6 +98,15 @@ export default function Home() {
   const [activeSectorTab, setActiveSectorTab] = useState('All Sectors');
   const [activeDropdown, setActiveDropdown] = useState<'sector' | 'mcap' | 'pe' | 'price' | null>(null);
   const [rightSidebarTab, setRightSidebarTab] = useState<'gainers' | 'losers' | 'active'>('gainers');
+
+  // Sync theme class on HTML element
+  useEffect(() => {
+    if (theme === 'light') {
+      document.documentElement.classList.add('light');
+    } else {
+      document.documentElement.classList.remove('light');
+    }
+  }, [theme]);
 
   // Launch live simulated websocket ticks
   useWebSocket();
@@ -315,6 +340,10 @@ export default function Home() {
           
           {/* Workspace scrollable viewport */}
           <div className="flex-1 flex flex-col min-h-0 p-4 space-y-4 overflow-y-auto scrollbar-thin">
+            {activeView === 'dashboard' && <DashboardView />}
+            
+            {(activeView === 'screener' || activeView === 'watchlist') && (
+              <>
             
             {/* Top Row: Metric Overview Cards */}
             {statsSummary && (
@@ -680,7 +709,7 @@ export default function Home() {
 
             {/* 4. Table Grid viewport (Middle Section) */}
             <div className="h-[340px] flex flex-col shrink-0 min-h-0">
-              <StockTable displayStocks={displayStocks} />
+              <StockTable displayStocks={activeView === 'watchlist' ? watchlistStocks : displayStocks} />
             </div>
 
             {/* 5. Bottom Section: Candle chart, technical overlays and stats */}
@@ -697,11 +726,15 @@ export default function Home() {
                     {/* Visual header stats */}
                     <div className="flex items-center justify-between pb-3.5 border-b border-[#1f2937]/50">
                       <div className="space-y-0.5">
-                        <div className="flex items-center space-x-1">
-                          <span className="w-5 h-5 rounded-lg bg-blue-600/10 border border-blue-500/30 flex items-center justify-center font-black text-[9px] text-blue-400">
+                        <div 
+                          className="flex items-center space-x-1 cursor-pointer group/title"
+                          onClick={() => setDetailSymbol(activeStock.symbol)}
+                          title="Open detailed profile and financials"
+                        >
+                          <span className="w-5 h-5 rounded-lg bg-blue-600/10 border border-blue-500/30 flex items-center justify-center font-black text-[9px] text-blue-400 group-hover/title:bg-blue-600 group-hover/title:text-white transition-all">
                             {activeStock.symbol.substring(0, 1)}
                           </span>
-                          <span className="font-extrabold text-sm text-white tracking-wider">{activeStock.symbol}</span>
+                          <span className="font-extrabold text-sm text-white tracking-wider group-hover/title:text-blue-400 group-hover/title:underline transition-all">{activeStock.symbol}</span>
                         </div>
                         <span className="text-[9.5px] text-gray-500 font-bold block truncate max-w-[130px]">{activeStock.name}</span>
                       </div>
@@ -932,6 +965,16 @@ export default function Home() {
                 <span className="text-[10px] text-gray-600">Click a row in the Stock Screener table to mount interactive candlestick charts and technical diagnostics.</span>
               </div>
             )}
+              </>
+            )}
+
+            {activeView === 'technical' && <TechnicalView />}
+            {activeView === 'charts' && <ChartsView />}
+            {activeView === 'market' && <MarketOverviewView />}
+            {activeView === 'news' && <NewsView />}
+            {activeView === 'portfolio' && <PortfolioView />}
+            {activeView === 'alerts' && <AlertsView />}
+            {activeView === 'settings' && <SettingsView />}
           </div>
 
           {/* 3. Right Sidebar Panel (Market Movers, Watchlist, Recently Viewed) */}
@@ -1127,6 +1170,9 @@ export default function Home() {
       >
         <FilterDrawer />
       </Drawer>
+
+      {/* Detail panel drawer */}
+      <DetailPanel />
 
       {/* Toast notifications */}
       <Toast />

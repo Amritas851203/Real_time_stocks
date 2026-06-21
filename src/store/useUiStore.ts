@@ -3,6 +3,7 @@ import { create } from 'zustand';
 interface UiState {
   sidebarOpen: boolean;
   selectedSymbol: string | null;
+  detailSymbol: string | null;
   chartTimeframe: '1D' | '1W' | '1M' | '1Y';
   activeIndicators: {
     sma: boolean;
@@ -12,14 +13,15 @@ interface UiState {
     bb: boolean;
   };
   theme: 'dark' | 'light';
-  activeView: 'screener' | 'watchlist' | 'benchmark';
+  activeView: 'dashboard' | 'screener' | 'technical' | 'watchlist' | 'charts' | 'market' | 'news' | 'portfolio' | 'alerts' | 'settings';
   toast: { message: string; type: 'success' | 'error' | 'info' } | null;
   setSidebarOpen: (open: boolean) => void;
   setSelectedSymbol: (symbol: string | null) => void;
+  setDetailSymbol: (symbol: string | null) => void;
   setChartTimeframe: (tf: '1D' | '1W' | '1M' | '1Y') => void;
   toggleIndicator: (indicator: 'sma' | 'ema' | 'rsi' | 'macd' | 'bb') => void;
   toggleTheme: () => void;
-  setActiveView: (view: 'screener' | 'watchlist' | 'benchmark') => void;
+  setActiveView: (view: 'dashboard' | 'screener' | 'technical' | 'watchlist' | 'charts' | 'market' | 'news' | 'portfolio' | 'alerts' | 'settings') => void;
   showToast: (message: string, type?: 'success' | 'error' | 'info') => void;
 }
 
@@ -28,6 +30,7 @@ let toastTimeout: NodeJS.Timeout;
 export const useUiStore = create<UiState>((set) => ({
   sidebarOpen: true,
   selectedSymbol: null,
+  detailSymbol: null,
   chartTimeframe: '1D',
   activeIndicators: {
     sma: true,
@@ -37,10 +40,11 @@ export const useUiStore = create<UiState>((set) => ({
     bb: false,
   },
   theme: 'dark', // Default theme is premium dark mode
-  activeView: 'screener',
+  activeView: 'dashboard',
   toast: null,
   setSidebarOpen: (open) => set({ sidebarOpen: open }),
   setSelectedSymbol: (symbol) => set({ selectedSymbol: symbol }),
+  setDetailSymbol: (symbol) => set({ detailSymbol: symbol }),
   setChartTimeframe: (tf) => set({ chartTimeframe: tf }),
   toggleIndicator: (indicator) =>
     set((state) => ({

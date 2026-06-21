@@ -16,6 +16,9 @@ export interface Stock {
   marketCap: number;
   peRatio: number | null;
   eps: number;
+  roe: number;
+  debtEquity: number;
+  dividendYield: number;
   sector: string;
   high52: number;
   low52: number;
@@ -93,4 +96,19 @@ export interface BenchmarkStats {
   renderedRowCount: number;
   fps: number;
   estimatedMemoryMb: number | null;
+}
+
+export interface Holding {
+  symbol: string;
+  shares: number;
+  buyPrice: number;
+}
+
+export interface PriceAlert {
+  id: string;
+  symbol: string;
+  type: 'above' | 'below';
+  thresholdValue: number;
+  status: 'active' | 'triggered';
+  triggeredAt?: number;
 }

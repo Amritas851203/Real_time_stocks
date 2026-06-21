@@ -20,7 +20,7 @@ interface ChartContainerProps {
 }
 
 export default function ChartContainer({ stock }: ChartContainerProps) {
-  const { chartTimeframe, setChartTimeframe, activeIndicators, toggleIndicator } = useUiStore();
+  const { theme, chartTimeframe, setChartTimeframe, activeIndicators, toggleIndicator } = useUiStore();
   const recentUpdates = useStockStore((s) => s.recentUpdates);
 
   const priceContainerRef = useRef<HTMLDivElement>(null);
@@ -143,23 +143,29 @@ export default function ChartContainer({ stock }: ChartContainerProps) {
     if (macdContainerRef.current) macdContainerRef.current.innerHTML = '';
 
     const width = priceContainerRef.current.clientWidth;
+    const isLight = theme === 'light';
+    const chartBg = isLight ? '#ffffff' : '#111827';
+    const chartText = isLight ? '#475569' : '#9ca3af';
+    const gridColor = isLight ? 'rgba(0, 0, 0, 0.05)' : 'rgba(31, 41, 55, 0.4)';
+    const borderColor = isLight ? '#e2e8f0' : 'rgba(31, 41, 55, 0.8)';
+
     const commonChartOptions = {
       width,
       layout: {
-        background: { color: '#111827' },
-        textColor: '#9ca3af',
+        background: { color: chartBg },
+        textColor: chartText,
         fontSize: 10,
         fontFamily: 'var(--font-sans)',
       },
       grid: {
-        vertLines: { color: 'rgba(31, 41, 55, 0.4)' },
-        horzLines: { color: 'rgba(31, 41, 55, 0.4)' },
+        vertLines: { color: gridColor },
+        horzLines: { color: gridColor },
       },
       crosshair: {
         mode: 0,
       },
       timeScale: {
-        borderColor: 'rgba(31, 41, 55, 0.8)',
+        borderColor: borderColor,
         timeVisible: true,
       },
     };
@@ -320,19 +326,30 @@ export default function ChartContainer({ stock }: ChartContainerProps) {
       seriesRef.current.macdHist = hist;
     }
 
+    let isMounted = true;
+
     const priceScale = priceChart.timeScale();
     const rsiScale = rsiChart?.timeScale();
     const macdScale = macdChart?.timeScale();
 
     const handleVisibleTimeRangeChange = (newRange: any) => {
-      if (rsiScale) rsiScale.setVisibleRange(newRange);
-      if (macdScale) macdScale.setVisibleRange(newRange);
+      if (!isMounted || !newRange) return;
+      try {
+        if (rsiScale) rsiScale.setVisibleRange(newRange);
+      } catch (err) {
+        // Safe check for timescale synchronization latency
+      }
+      try {
+        if (macdScale) macdScale.setVisibleRange(newRange);
+      } catch (err) {
+        // Safe check for timescale synchronization latency
+      }
     };
 
     priceScale.subscribeVisibleTimeRangeChange(handleVisibleTimeRangeChange);
 
     const resizeObserver = new ResizeObserver((entries) => {
-      if (entries.length === 0 || !entries[0].contentRect) return;
+      if (!isMounted || entries.length === 0 || !entries[0].contentRect) return;
       const newWidth = entries[0].contentRect.width;
       
       priceChart.resize(newWidth, 280);
@@ -343,6 +360,7 @@ export default function ChartContainer({ stock }: ChartContainerProps) {
     resizeObserver.observe(priceContainerRef.current);
 
     return () => {
+      isMounted = false;
       resizeObserver.disconnect();
       priceScale.unsubscribeVisibleTimeRangeChange(handleVisibleTimeRangeChange);
       priceChart.remove();
@@ -364,7 +382,7 @@ export default function ChartContainer({ stock }: ChartContainerProps) {
         macdHist: null,
       };
     };
-  }, [history, activeIndicators]);
+  }, [history, activeIndicators, theme]);
 
   return (
     <div className="space-y-3">

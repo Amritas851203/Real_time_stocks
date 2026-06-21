@@ -23,6 +23,7 @@ import {
 export default function Sidebar() {
   const { sidebarOpen, setSidebarOpen, activeView, setActiveView, showToast } = useUiStore();
   const watchlist = useStockStore((state) => state.watchlist);
+  const alerts = useStockStore((state) => state.alerts);
 
   const menuItems = [
     {
@@ -30,14 +31,12 @@ export default function Sidebar() {
       name: 'Dashboard',
       icon: LayoutDashboard,
       badge: null,
-      active: true,
     },
     {
       id: 'screener',
       name: 'Stock Screener',
       icon: SlidersHorizontal,
       badge: null,
-      active: true,
     },
     {
       id: 'technical',
@@ -49,8 +48,7 @@ export default function Sidebar() {
       id: 'watchlist',
       name: 'My Watchlist',
       icon: Star,
-      badge: watchlist.length > 0 ? watchlist.length : 23,
-      active: true,
+      badge: watchlist.length > 0 ? watchlist.length : null,
     },
     {
       id: 'charts',
@@ -80,13 +78,7 @@ export default function Sidebar() {
       id: 'alerts',
       name: 'Alerts',
       icon: Bell,
-      badge: 7,
-    },
-    {
-      id: 'backtesting',
-      name: 'Backtesting',
-      icon: History,
-      badge: null,
+      badge: alerts.filter(a => a.status === 'active').length > 0 ? alerts.filter(a => a.status === 'active').length : null,
     },
     {
       id: 'settings',
@@ -96,16 +88,8 @@ export default function Sidebar() {
     },
   ] as const;
 
-  const handleItemClick = (id: string, active: boolean) => {
-    if (active) {
-      if (id === 'watchlist') {
-        setActiveView('watchlist');
-      } else if (id === 'dashboard' || id === 'screener') {
-        setActiveView('screener');
-      }
-    } else {
-      showToast(`${id.charAt(0).toUpperCase() + id.slice(1)} panel is locked in free tier. Connect professional account to unlock.`, 'info');
-    }
+  const handleItemClick = (id: typeof menuItems[number]['id']) => {
+    setActiveView(id);
   };
 
   return (
@@ -145,15 +129,12 @@ export default function Sidebar() {
         {/* Nav Menu Items */}
         <nav className="py-4 px-2 space-y-0.5 overflow-y-auto max-h-[60vh] scrollbar-thin">
           {menuItems.map((item) => {
-            const isSelected =
-              (item.id === 'watchlist' && activeView === 'watchlist') ||
-              ((item.id === 'screener' || item.id === 'dashboard') && activeView === 'screener');
-            
+            const isSelected = activeView === item.id;
             const Icon = item.icon;
             return (
               <button
                 key={item.id}
-                onClick={() => handleItemClick(item.id, 'active' in item)}
+                onClick={() => handleItemClick(item.id)}
                 className={`w-full flex items-center rounded-lg p-2.5 text-[11px] font-bold transition-all duration-150 group relative ${
                   isSelected
                     ? 'bg-gradient-to-r from-blue-550/15 to-blue-500/5 border-l-2 border-blue-500 text-blue-400 shadow-[inset_4px_0_10px_rgba(59,130,246,0.05)]'

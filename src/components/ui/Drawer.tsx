@@ -43,8 +43,12 @@ export default function Drawer({ isOpen, onClose, title, children, size = 'md' }
     <div className="fixed inset-0 z-50 overflow-hidden select-none">
       {/* Backdrop */}
       <div
-        className="absolute inset-0 bg-black/60 backdrop-blur-sm transition-opacity duration-300 animate-fade-in"
-        onClick={onClose}
+        className="absolute inset-0 bg-black/60 backdrop-blur-sm transition-opacity duration-300 animate-fade-in cursor-pointer"
+        onClick={(e) => {
+          console.log("[DEBUG] Drawer backdrop clicked");
+          e.stopPropagation();
+          onClose();
+        }}
       />
 
       <div className="absolute inset-y-0 right-0 pl-10 max-w-full flex">
@@ -56,8 +60,13 @@ export default function Drawer({ isOpen, onClose, title, children, size = 'md' }
           <div className="px-6 py-4 border-b border-[#21262d] flex items-center justify-between">
             <h2 className="text-sm font-bold text-gray-100 tracking-wide">{title}</h2>
             <button
-              onClick={onClose}
-              className="p-1 rounded bg-[#161b22] hover:bg-[#30363d] text-gray-400 hover:text-white transition-colors"
+              type="button"
+              onClick={(e) => {
+                console.log("[DEBUG] Drawer close button clicked");
+                e.stopPropagation();
+                onClose();
+              }}
+              className="p-1 rounded bg-[#161b22] hover:bg-[#30363d] text-gray-400 hover:text-white transition-colors cursor-pointer"
             >
               <X className="w-4 h-4" />
             </button>

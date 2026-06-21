@@ -180,6 +180,11 @@ export function generateStocks(count: number = 5050): Stock[] {
     const low52 = Number((price * yearLowMult).toFixed(2));
     const high52 = Number((price * yearHighMult).toFixed(2));
 
+    // ROE, Debt/Equity, Div Yield
+    const roe = Number(((rand() - 0.2) * 45).toFixed(2));
+    const debtEquity = Number((rand() * (sectorInfo.prefix === 'FIN' || sectorInfo.prefix === 'UTIL' ? 2.5 : 1.2)).toFixed(2));
+    const dividendYield = Number((rand() > 0.4 ? rand() * (sectorInfo.prefix === 'UTIL' || sectorInfo.prefix === 'DEFN' ? 6.0 : 3.5) : 0).toFixed(2));
+
     stocks.push({
       symbol,
       name,
@@ -189,6 +194,9 @@ export function generateStocks(count: number = 5050): Stock[] {
       marketCap,
       peRatio,
       eps,
+      roe,
+      debtEquity,
+      dividendYield,
       sector: sectorInfo.name,
       low52,
       high52,
@@ -203,10 +211,61 @@ export function generateStocks(count: number = 5050): Stock[] {
 export function getMarketOverview(): MarketOverview[] {
   // We can generate stable indices
   return [
-    { symbol: '^NSEI', name: 'Nifty 50', price: 23516.20, change: 84.85, changePercent: 0.36 },
-    { symbol: '^BSESN', name: 'SENSEX', price: 77301.14, change: 308.37, changePercent: 0.40 },
+    { symbol: '^NSEI', name: 'Nifty 50', price: 24812.25, change: 330.40, changePercent: 1.35 },
+    { symbol: '^BSESN', name: 'SENSEX', price: 81458.66, change: 1030.20, changePercent: 1.28 },
     { symbol: '^IXIC', name: 'NASDAQ', price: 17721.59, change: -5.31, changePercent: -0.03 },
     { symbol: '^DJI', name: 'Dow Jones', price: 38834.86, change: 56.22, changePercent: 0.15 },
     { symbol: '^GSPC', name: 'S&P 500', price: 5487.03, change: 13.80, changePercent: 0.25 }
   ];
+}
+
+export interface FinancialStatementYear {
+  year: string;
+  revenue: number;
+  netIncome: number;
+  assets: number;
+  liabilities: number;
+  equity: number;
+  cashFlow: number;
+}
+
+export function generateFinancials(symbol: string): FinancialStatementYear[] {
+  const rand = createRandom(symbol + '_financials');
+  const years = ['2023', '2024', '2025'];
+  
+  // Base numbers seeded from symbol name length and characters
+  let baseVal = 100000000;
+  for (let i = 0; i < symbol.length; i++) {
+    baseVal += symbol.charCodeAt(i) * 5000000;
+  }
+
+  const financials: FinancialStatementYear[] = [];
+  let currentRev = baseVal;
+  
+  for (const year of years) {
+    const growth = 1 + (rand() - 0.45) * 0.15; // -6.75% to +15.75% growth
+    currentRev = Math.round(currentRev * growth);
+    
+    const margin = 0.05 + rand() * 0.18; // 5% to 23% net margin
+    const netIncome = Math.round(currentRev * margin);
+    
+    const assets = Math.round(currentRev * (0.8 + rand() * 0.5));
+    const debtRatio = 0.2 + rand() * 0.5; // 20% to 70% debt
+    const liabilities = Math.round(assets * debtRatio);
+    const equity = assets - liabilities;
+    
+    const cashFlow = Math.round(netIncome * (0.9 + rand() * 0.3));
+
+    financials.push({
+      year,
+      revenue: currentRev,
+      netIncome,
+      assets,
+      liabilities,
+      equity,
+      cashFlow,
+    });
+  }
+
+  return financials;
 }
