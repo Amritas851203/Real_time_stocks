@@ -94,7 +94,7 @@ export default function Sidebar() {
 
   return (
     <aside
-      className={`bg-[#050816] border-r border-[#1f2937]/50 flex flex-col justify-between transition-all duration-300 z-30 shrink-0 select-none ${
+      className={`bg-[#050816] border-r border-[#1f2937]/50 flex flex-col justify-between transition-all duration-300 z-30 shrink-0 select-none hidden sm:block ${
         sidebarOpen ? 'w-64' : 'w-16'
       }`}
     >
