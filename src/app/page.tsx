@@ -1,6 +1,10 @@
 'use client';
 
 import React, { useState, useMemo, useEffect, useRef } from 'react';
+import dynamic from 'next/dynamic';
+
+// Lazily loaded mobile home — never rendered on desktop
+const MobileHome = dynamic(() => import('./mobile/page'), { ssr: false });
 import Sidebar from '../components/layout/Sidebar';
 import Topbar from '../components/layout/Topbar';
 import Ticker from '../components/layout/Ticker';
@@ -57,7 +61,25 @@ const QUICK_SECTORS = [
   'Utilities'
 ];
 
-export default function Home() {
+// ─── Root wrapper: chooses Mobile or Desktop shell ─────────────────────────
+export default function Root() {
+  const [isMobile, setIsMobile] = useState<boolean | null>(null);
+
+  useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth <= 768);
+    check();
+    window.addEventListener('resize', check);
+    return () => window.removeEventListener('resize', check);
+  }, []);
+
+  // Avoid flash: render nothing until we know the viewport size
+  if (isMobile === null) return null;
+  if (isMobile) return <MobileHome />;
+  return <Home />;
+}
+
+// ─── Desktop Home ─────────────────────────────────────────────────────────
+function Home() {
   const { displayStocks, rawStocks, watchlist } = useStocks();
 
   const watchlistStocks = useMemo(() => {
@@ -323,7 +345,7 @@ export default function Home() {
   };
 
   return (
-    <div className="flex h-screen w-screen bg-[#050816] text-[#f3f4f6] overflow-hidden select-none font-sans">
+    <div className="flex h-screen w-screen bg-[#050816] text-[#f3f4f6] overflow-hidden font-sans">
       {/* 1. Left Collapsible Sidebar */}
       <Sidebar />
 
