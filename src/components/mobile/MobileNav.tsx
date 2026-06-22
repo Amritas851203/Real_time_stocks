@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { Menu, Search, Bell } from 'lucide-react';
-import { useMobile } from '../../../context/MobileContext';
+import { useMobile } from '../../context/MobileContext';
 import { useRouter } from 'next/navigation';
 
 export default function MobileNav() {

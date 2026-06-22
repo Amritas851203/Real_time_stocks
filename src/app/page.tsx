@@ -1,10 +1,6 @@
 'use client';
 
 import React, { useState, useMemo, useEffect, useRef } from 'react';
-import dynamic from 'next/dynamic';
-
-// Lazily loaded mobile home — never rendered on desktop
-const MobileHome = dynamic(() => import('./mobile/page'), { ssr: false });
 import Sidebar from '../components/layout/Sidebar';
 import Topbar from '../components/layout/Topbar';
 import Ticker from '../components/layout/Ticker';
@@ -61,20 +57,30 @@ const QUICK_SECTORS = [
   'Utilities'
 ];
 
-// ─── Root wrapper: chooses Mobile or Desktop shell ─────────────────────────
+// ─── Root wrapper: redirects mobile users to /mobile route ──────────────────
 export default function Root() {
-  const [isMobile, setIsMobile] = useState<boolean | null>(null);
+  const [checked, setChecked] = useState(false);
 
   useEffect(() => {
-    const check = () => setIsMobile(window.innerWidth <= 768);
-    check();
-    window.addEventListener('resize', check);
-    return () => window.removeEventListener('resize', check);
+    // If the browser is a phone viewport, redirect to /mobile
+    // The middleware handles this server-side too, but this is the client-side fallback.
+    if (window.innerWidth <= 768) {
+      window.location.replace('/mobile');
+    } else {
+      setChecked(true);
+    }
+
+    const handleResize = () => {
+      if (window.innerWidth <= 768) {
+        window.location.replace('/mobile');
+      }
+    };
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  // Avoid flash: render nothing until we know the viewport size
-  if (isMobile === null) return null;
-  if (isMobile) return <MobileHome />;
+  // Show nothing while we check — prevents desktop flash on mobile
+  if (!checked) return null;
   return <Home />;
 }
 

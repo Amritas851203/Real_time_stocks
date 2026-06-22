@@ -22,7 +22,7 @@ export default function ProfilePage() {
   const theme = useUiStore((s) => s.theme);
   const toggleTheme = useUiStore((s) => s.toggleTheme);
 
-  const totalInvested = holdings.reduce((sum, h) => sum + h.shares * h.avgCost, 0);
+  const totalInvested = holdings.reduce((sum, h) => sum + h.shares * h.buyPrice, 0);
   const portfolioValue = cashBalance + totalInvested;
 
   return (
