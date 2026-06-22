@@ -16,7 +16,7 @@ export default function MobileShell({ children }: { children: React.ReactNode })
 
   return (
     <MobileProvider>
-      <div className="h-screen w-screen flex flex-col bg-[#050816] text-[#f3f4f6] overflow-hidden">
+      <div className="h-[100dvh] w-full flex flex-col bg-[#050816] text-[#f3f4f6] overflow-hidden">
         {/* Fixed sticky top nav */}
         <MobileNav />
         {/* Slide-out drawer overlay */}

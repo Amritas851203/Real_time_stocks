@@ -21,10 +21,18 @@ export default function MobileNav() {
 
       {/* Right Icons */}
       <div className="flex items-center space-x-1">
-        <button className="w-9 h-9 flex items-center justify-center rounded-xl hover:bg-[#0B1220] transition-colors">
+        <button
+          onClick={() => router.push('/mobile/screener')}
+          className="w-9 h-9 flex items-center justify-center rounded-xl hover:bg-[#0B1220] transition-colors"
+          title="Search Stocks"
+        >
           <Search className="w-4.5 h-4.5 text-gray-400" />
         </button>
-        <button className="w-9 h-9 flex items-center justify-center rounded-xl hover:bg-[#0B1220] transition-colors relative">
+        <button
+          onClick={() => router.push('/mobile/alerts')}
+          className="w-9 h-9 flex items-center justify-center rounded-xl hover:bg-[#0B1220] transition-colors relative"
+          title="Price Alerts"
+        >
           <Bell className="w-4.5 h-4.5 text-gray-400" />
           <span className="absolute top-1.5 right-1.5 w-1.5 h-1.5 bg-rose-500 rounded-full" />
         </button>

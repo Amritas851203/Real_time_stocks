@@ -22,11 +22,11 @@ export default function Toast() {
   };
 
   return (
-    <div className="fixed bottom-6 right-6 z-50 animate-slide-left select-none">
+    <div className="fixed top-20 left-4 right-4 md:top-auto md:left-auto md:bottom-6 md:right-6 z-50 animate-slide-left select-none">
       <div
         className={`flex items-center space-x-3 border rounded-lg px-4 py-3 shadow-2xl backdrop-blur-md ${
           borders[toast.type]
-        } max-w-sm`}
+        } w-full md:max-w-sm`}
       >
         {icons[toast.type]}
         <span className="text-xs font-semibold tracking-wide">{toast.message}</span>

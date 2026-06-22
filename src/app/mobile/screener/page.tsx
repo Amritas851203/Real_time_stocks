@@ -73,6 +73,12 @@ export default function ScreenerPage() {
           >
             <SlidersHorizontal className="w-3.5 h-3.5" /> Filters
           </button>
+          <button
+            onClick={() => { setSearch(''); setSector('All'); setSortKey('change'); setSortDesc(true); }}
+            className="flex-shrink-0 px-3 py-1.5 rounded-xl bg-rose-600/10 border border-rose-500/20 text-rose-450 text-xs font-bold"
+          >
+            Reset
+          </button>
           {SORT_OPTIONS.map(opt => (
             <button
               key={opt.key}
@@ -112,8 +118,13 @@ export default function ScreenerPage() {
       <div className="px-4 space-y-2">
         {stocks.length === 0
           ? [...Array(5)].map((_, i) => <div key={i} className="h-24 rounded-2xl bg-[#0B1220]/40 animate-pulse" />)
-          : displayed.map(stock => <MobileStockCard key={stock.symbol} stock={stock} />)
+          : displayed.slice(0, 50).map(stock => <MobileStockCard key={stock.symbol} stock={stock} />)
         }
+        {displayed.length > 50 && (
+          <p className="text-center text-xs text-gray-500 py-3 border border-[#1f2937]/10 rounded-xl bg-[#0B1220]/20">
+            Showing top 50 matches. Refine your search to find other stocks.
+          </p>
+        )}
       </div>
     </div>
   );

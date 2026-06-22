@@ -130,9 +130,14 @@ export default function MobileHome() {
             </div>
           ) : (
             <div className="space-y-2">
-              {displayStocks.map((stock) => (
+              {displayStocks.slice(0, 50).map((stock) => (
                 <MobileStockCard key={stock.symbol} stock={stock} />
               ))}
+              {displayStocks.length > 50 && (
+                <p className="text-center text-xs text-gray-500 py-3 border border-[#1f2937]/10 rounded-xl bg-[#0B1220]/20">
+                  Showing top 50 matches. Refine your search to find other stocks.
+                </p>
+              )}
             </div>
           )}
         </div>

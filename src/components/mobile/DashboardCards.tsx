@@ -1,15 +1,50 @@
-'use client';
-
 import React from 'react';
-import { TrendingUp, TrendingDown, Award, Star } from 'lucide-react';
+import { TrendingUp, TrendingDown, Award, Star, Download } from 'lucide-react';
 import { useStockStore } from '../../store/useStockStore';
+import { useUiStore } from '../../store/useUiStore';
 
 export default function DashboardCards() {
   const stocks = useStockStore((s) => s.stocks);
   const watchlist = useStockStore((s) => s.watchlist);
+  const cashBalance = useStockStore((s) => s.cashBalance);
+  const holdings = useStockStore((s) => s.holdings);
+  const showToast = useUiStore((s) => s.showToast);
 
   const gainers = stocks.filter((s) => s.changePercent > 0).length;
   const losers = stocks.filter((s) => s.changePercent < 0).length;
+
+  const handleExport = () => {
+    const ratio = (gainers / (gainers + losers || 1)) * 100;
+    
+    const reportText = `ZETHETA ALPHA MOBILE TERMINAL REPORT
+Generated At: ${new Date().toISOString()}
+------------------------------------------
+Market Status: OPEN (Latency: 23ms)
+Total Stocks Tracked: ${stocks.length}
+Holdings Cash Balance: $${cashBalance.toLocaleString()}
+Watchlist Count: ${watchlist.length}
+
+MARKET BREADTH INDICATOR
+-------------------------
+Bullish Breadth: ${ratio.toFixed(2)}%
+Gainers: ${gainers} | Losers: ${losers}
+
+PORTFOLIO OVERVIEW
+------------------
+Active Holdings: ${holdings.length}
+Available Funds: $${cashBalance.toLocaleString()}
+------------------------------------------
+END REPORT`;
+
+    const blob = new Blob([reportText], { type: 'text/plain;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `zetheta_mobile_report_${Date.now()}.txt`;
+    link.click();
+    URL.revokeObjectURL(url);
+    showToast('Market terminal report exported.', 'success');
+  };
 
   const cards = [
     {
@@ -52,7 +87,16 @@ export default function DashboardCards() {
 
   return (
     <div>
-      <h2 className="text-xs font-bold uppercase tracking-widest text-gray-400 mb-2">Overview</h2>
+      <div className="flex items-center justify-between mb-2">
+        <h2 className="text-xs font-bold uppercase tracking-widest text-gray-400">Overview</h2>
+        <button
+          onClick={handleExport}
+          className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-[10px] font-black uppercase tracking-wider transition-all cursor-pointer shadow-lg shadow-blue-500/20"
+        >
+          <Download className="w-3 h-3" />
+          <span>Export Report</span>
+        </button>
+      </div>
       <div className="grid grid-cols-2 gap-3">
         {cards.map((card) => (
           <div

@@ -8,12 +8,12 @@ import Link from 'next/link';
 const MENU_ITEMS = [
   { name: 'Dashboard',       href: '/mobile',             Icon: LayoutDashboard },
   { name: 'Stock Screener',  href: '/mobile/screener',    Icon: ScanLine },
-  { name: 'Technical Screen',href: '/mobile/screener',    Icon: Activity },
+  { name: 'Chart Analysis',  href: '/mobile/charts',      Icon: Activity },
   { name: 'Watchlist',       href: '/mobile/watchlist',   Icon: Star },
   { name: 'Market Overview', href: '/mobile/markets',     Icon: Globe },
-  { name: 'Portfolio',       href: '/mobile/profile',     Icon: Briefcase },
-  { name: 'Alerts',          href: '/mobile/profile',     Icon: Bell },
-  { name: 'Settings',        href: '/mobile/profile',     Icon: Settings },
+  { name: 'Portfolio',       href: '/mobile/portfolio',   Icon: Briefcase },
+  { name: 'Alerts',          href: '/mobile/alerts',      Icon: Bell },
+  { name: 'Settings',        href: '/mobile/settings',    Icon: Settings },
 ];
 
 export default function MobileDrawer() {
