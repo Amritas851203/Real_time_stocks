@@ -4,6 +4,7 @@ import React, { useState, useMemo } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { useStockStore } from '../../../../store/useStockStore';
 import { ArrowLeft, Star, TrendingUp, TrendingDown, ChevronDown, ChevronUp } from 'lucide-react';
+import { generateHistoricalData } from '../../../../utils/mockDataGenerator';
 
 // ── Formatters ───────────────────────────────────────────────────────────────
 const fmt = (n: number) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 2 }).format(n);
@@ -64,7 +65,11 @@ export default function StockDetailPage() {
   const toggleWatchlist = useStockStore((s) => s.toggleWatchlist);
   const [tf, setTf] = useState<TF>('1M');
   const stock = useMemo(() => stocks.find((s) => s.symbol === symbol), [stocks, symbol]);
-  const candles = useMemo(() => (stock?.history ?? []).slice(-TF_COUNTS[tf]), [stock, tf]);
+  const fullHistory = useMemo(() => {
+    if (!stock) return [];
+    return generateHistoricalData(stock.symbol, stock.price, 300);
+  }, [stock?.symbol, stock?.price]);
+  const candles = useMemo(() => fullHistory.slice(-TF_COUNTS[tf]), [fullHistory, tf]);
   const isPos = (stock?.changePercent ?? 0) >= 0;
   const inWL = watchlist.includes(symbol);
 

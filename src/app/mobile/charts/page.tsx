@@ -4,6 +4,7 @@ import React, { useState, useMemo } from 'react';
 import { useStockStore } from '../../../store/useStockStore';
 import { useUiStore } from '../../../store/useUiStore';
 import { LineChart as ChartIcon, Star, TrendingUp, TrendingDown, ChevronDown, ChevronUp, Search } from 'lucide-react';
+import { generateHistoricalData } from '../../../utils/mockDataGenerator';
 
 // ── Formatters ───────────────────────────────────────────────────────────────
 const fmt = (n: number) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 2 }).format(n);
@@ -78,7 +79,12 @@ export default function MobileChartsPage() {
     return stocks[0];
   }, [stocks, selectedSymbol]);
 
-  const candles = useMemo(() => (stock?.history ?? []).slice(-TF_COUNTS[tf]), [stock, tf]);
+  const fullHistory = useMemo(() => {
+    if (!stock) return [];
+    return generateHistoricalData(stock.symbol, stock.price, 300);
+  }, [stock?.symbol, stock?.price]);
+
+  const candles = useMemo(() => fullHistory.slice(-TF_COUNTS[tf]), [fullHistory, tf]);
   const isPos = (stock?.changePercent ?? 0) >= 0;
   const inWL = stock ? watchlist.includes(stock.symbol) : false;
 
